@@ -1,0 +1,8 @@
+﻿  Source.cpp
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(60,41): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(61,43): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(63,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(78,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(77,42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(83,16): warning C4244: 'initializing': conversion from 'double' to 'char', possible loss of data
+  Fields++.vcxproj -> D:\NewDesktop\Programming\VS projects\Fields++\Debug\Fields++.exe

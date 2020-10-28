@@ -1,0 +1,19 @@
+﻿  Source.cpp
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(48,47): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(49,51): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(51,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(56,36): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(55,36): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(61,38): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(62,39): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(67,26): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(95,16): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(97,26): warning C4244: 'initializing': conversion from 'float' to 'char', possible loss of data
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(103,20): warning C4309: '=': truncation of constant value
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(108,20): warning C4309: '=': truncation of constant value
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(112,20): warning C4309: '=': truncation of constant value
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(117,20): warning C4309: '=': truncation of constant value
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(124,20): warning C4309: '=': truncation of constant value
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(129,20): warning C4309: '=': truncation of constant value
+D:\NewDesktop\Programming\VS projects\Fields++\Fields++\Source.cpp(46,6): warning C4101: 'pitch': unreferenced local variable
+  Fields++.vcxproj -> D:\NewDesktop\Programming\VS projects\Fields++\x64\Debug\Fields++.exe
