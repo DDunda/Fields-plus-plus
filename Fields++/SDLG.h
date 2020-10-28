@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL.h>
-#include <SDL_image.h>
 
 #ifdef ERROR_LOGGING
 #include <string>
