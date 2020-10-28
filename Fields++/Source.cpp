@@ -2,6 +2,7 @@
 #include <vector>
 #include <time.h>
 #include <thread>
+#include <string>
 
 #define ERROR_LOGGING
 #include "SDLG.h"
@@ -11,6 +12,7 @@
 using namespace SDLG;
 using std::vector;
 using std::thread;
+using std::string;
 
 int main(int argc, char* argv[]) { return StartSDL(); }
 
@@ -28,8 +30,6 @@ SDL_Texture* canvas;
 #define HUE 0
 #define XY 1
 #define COLOUR_MODE XY
-
-#define THREAD_COUNT 8
 
 class Planet {
 public:
@@ -60,10 +60,12 @@ float xOff = CAM_X - 0.5f * CAM_WIDTH;
 float yOff = CAM_Y + 0.5f * CAM_HEIGHT;
 float k = 6.0f / (M_PI * 2.0f);
 
+int threadCount;
+
 // Makes pretty colour
 void ThreadMinion(char* _pixels, int threadIndex) {
 	char* pixels = _pixels + threadIndex * CANVAS_WIDTH * 3;
-	for (int y = threadIndex; y < CANVAS_HEIGHT; y += THREAD_COUNT) {
+	for (int y = threadIndex; y < CANVAS_HEIGHT; y += threadCount) {
 		for (int x = 0; x < CANVAS_WIDTH; ++x) {
 			float px = x * halfWidthInv + xOff;
 			float py = y * halfHeightInv + yOff;
@@ -147,7 +149,7 @@ void ThreadMinion(char* _pixels, int threadIndex) {
 			}
 #endif
 		}
-		pixels += CANVAS_WIDTH * (THREAD_COUNT - 1) * 3;
+		pixels += CANVAS_WIDTH * (threadCount - 1) * 3;
 	}
 }
 
@@ -156,9 +158,10 @@ void RenderGravityWell() {
 	int pitch;
 	SDL_LockTexture(canvas, NULL, (void**)&pixels, &pitch);
 
-	thread RenderingThreads[THREAD_COUNT];
-	for (int i = 0; i < THREAD_COUNT; i++)	RenderingThreads[i] = thread(ThreadMinion, pixels, i);
-	for (int i = 0; i < THREAD_COUNT; i++)	RenderingThreads[i].join();
+	thread* RenderingThreads = new thread[threadCount];
+	for (int i = 0; i < threadCount; i++)	RenderingThreads[i] = thread(ThreadMinion, pixels, i);
+	for (int i = 0; i < threadCount; i++)	RenderingThreads[i].join();
+	delete[] RenderingThreads;
 
 	SDL_UnlockTexture(canvas);
 }
@@ -193,16 +196,20 @@ void DoPlanetPhysics() {
 void SDLG::OnStart() {
 	minFrameDelta = 1000 / 60;
 
+	threadCount = thread::hardware_concurrency();
+	string title = "Field generator++ (" + std::to_string(threadCount) + " threads)";
+	SDL_SetWindowTitle(gameWindow, title.c_str());
+
 	srand(time(0));
 
 	int n = 30;
-	float v = 1.0f;
+	float v = 0.4f;
 	for (int i = 0; i < n; i++) {
 		//float m = RandBetween(1, 99) / 100.0f;
 		//float x = RandBetween(-100, 199) / 100.0f * 1.92f;
 		//float y = RandBetween(-100, 199) / 100.0f * 1.08f;
 
-		float m = 0.1f;
+		float m = 0.01f;
 		float x = cos(i * 2.0f * M_PI / (float)n);
 		float y = sin(i * 2.0f * M_PI / (float)n);
 		float vx = -sin(i * 2.0f * M_PI / (float)n) * v;
