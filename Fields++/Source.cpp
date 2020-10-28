@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <vector>
 #include <time.h>
+#include <thread>
 
 #define ERROR_LOGGING
 #include "SDLG.h"
@@ -9,6 +10,7 @@
 
 using namespace SDLG;
 using std::vector;
+using std::thread;
 
 int main(int argc, char* argv[]) { return StartSDL(); }
 
@@ -26,6 +28,8 @@ SDL_Texture* canvas;
 #define HUE 0
 #define XY 1
 #define COLOUR_MODE XY
+
+#define THREAD_COUNT 8
 
 class Planet {
 public:
@@ -50,21 +54,16 @@ Planet* last;
 
 float dT;
 
+float halfWidthInv = CAM_WIDTH / CANVAS_WIDTH;
+float halfHeightInv = -CAM_HEIGHT / CANVAS_HEIGHT;
+float xOff = CAM_X - 0.5f * CAM_WIDTH;
+float yOff = CAM_Y + 0.5f * CAM_HEIGHT;
+float k = 6.0f / (M_PI * 2.0f);
+
 // Makes pretty colour
-void RenderGravityWell() {
-
-	float halfWidthInv = CAM_WIDTH / CANVAS_WIDTH;
-	float halfHeightInv = -CAM_HEIGHT / CANVAS_HEIGHT;
-
-	float xOff = CAM_X - 0.5f * CAM_WIDTH;
-	float yOff = CAM_Y + 0.5f * CAM_HEIGHT;
-
-	float k = 6.0f / (M_PI * 2.0f);
-
-	char* pixels;
-	int pitch;
-	SDL_LockTexture(canvas, NULL, (void**)&pixels, &pitch);
-	for (int y = 0; y < CANVAS_HEIGHT; ++y) {
+void ThreadMinion(char* _pixels, int threadIndex) {
+	char* pixels = _pixels + threadIndex * CANVAS_WIDTH * 3;
+	for (int y = threadIndex; y < CANVAS_HEIGHT; y += THREAD_COUNT) {
 		for (int x = 0; x < CANVAS_WIDTH; ++x) {
 			float px = x * halfWidthInv + xOff;
 			float py = y * halfHeightInv + yOff;
@@ -148,7 +147,19 @@ void RenderGravityWell() {
 			}
 #endif
 		}
+		pixels += CANVAS_WIDTH * (THREAD_COUNT - 1) * 3;
 	}
+}
+
+void RenderGravityWell() {
+	char* pixels;
+	int pitch;
+	SDL_LockTexture(canvas, NULL, (void**)&pixels, &pitch);
+
+	thread RenderingThreads[THREAD_COUNT];
+	for (int i = 0; i < THREAD_COUNT; i++)	RenderingThreads[i] = thread(ThreadMinion, pixels, i);
+	for (int i = 0; i < THREAD_COUNT; i++)	RenderingThreads[i].join();
+
 	SDL_UnlockTexture(canvas);
 }
 
@@ -184,17 +195,18 @@ void SDLG::OnStart() {
 
 	srand(time(0));
 
-	int n = 4;
+	int n = 30;
+	float v = 1.0f;
 	for (int i = 0; i < n; i++) {
 		//float m = RandBetween(1, 99) / 100.0f;
 		//float x = RandBetween(-100, 199) / 100.0f * 1.92f;
 		//float y = RandBetween(-100, 199) / 100.0f * 1.08f;
 
-		float m = 1.0f;
+		float m = 0.1f;
 		float x = cos(i * 2.0f * M_PI / (float)n);
 		float y = sin(i * 2.0f * M_PI / (float)n);
-		float vx = -sin(i * 2.0f * M_PI / (float)n);
-		float vy = cos(i * 2.0f * M_PI / (float)n);
+		float vx = -sin(i * 2.0f * M_PI / (float)n) * v;
+		float vy = cos(i * 2.0f * M_PI / (float)n) * v;
 
 		planets.push_back(Planet(m, x, y, vx, vy));
 	}
