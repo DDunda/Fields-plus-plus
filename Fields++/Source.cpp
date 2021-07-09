@@ -27,9 +27,17 @@ SDL_Texture* canvas;
 #define CAM_X 0.0
 #define CAM_Y 0.0
 
+#define X_OFF CAM_X - 0.5f * CAM_WIDTH
+#define Y_OFF CAM_Y + 0.5f * CAM_HEIGHT
+
 #define HUE 0
 #define XY 1
 #define COLOUR_MODE XY
+
+#define N 30
+#define M 0.015
+#define V 0.4
+#include "config.h"
 
 class Planet {
 public:
@@ -56,9 +64,6 @@ float dT;
 
 float halfWidthInv = CAM_WIDTH / CANVAS_WIDTH;
 float halfHeightInv = -CAM_HEIGHT / CANVAS_HEIGHT;
-float xOff = CAM_X - 0.5f * CAM_WIDTH;
-float yOff = CAM_Y + 0.5f * CAM_HEIGHT;
-float k = 6.0f / (M_PI * 2.0f);
 
 int threadCount;
 
@@ -67,8 +72,8 @@ void ThreadMinion(char* _pixels, int threadIndex) {
 	char* pixels = _pixels + threadIndex * CANVAS_WIDTH * 3;
 	for (int y = threadIndex; y < CANVAS_HEIGHT; y += threadCount) {
 		for (int x = 0; x < CANVAS_WIDTH; ++x) {
-			float px = x * halfWidthInv + xOff;
-			float py = y * halfHeightInv + yOff;
+			float px = x * halfWidthInv + X_OFF;
+			float py = y * halfHeightInv + Y_OFF;
 
 			float fx = 0.0f, fy = 0.0f;
 
@@ -100,7 +105,7 @@ void ThreadMinion(char* _pixels, int threadIndex) {
 #endif
 
 #if COLOUR_MODE == HUE
-			float fsector = atan2(fy, fx) * k + 3;
+			float fsector = atan2(fy, fx) * 3.0 / M_PI + 3.0;
 
 			//   \  1  /
 			//  2 \   / 0,6
@@ -202,20 +207,17 @@ void SDLG::OnStart() {
 
 	srand(time(0));
 
-	int n = 30;
-	float v = 0.4f;
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < N; i++) {
 		//float m = RandBetween(1, 99) / 100.0f;
 		//float x = RandBetween(-100, 199) / 100.0f * 1.92f;
 		//float y = RandBetween(-100, 199) / 100.0f * 1.08f;
 
-		float m = 0.01f;
-		float x = cos(i * 2.0f * M_PI / (float)n);
-		float y = sin(i * 2.0f * M_PI / (float)n);
-		float vx = -sin(i * 2.0f * M_PI / (float)n) * v;
-		float vy = cos(i * 2.0f * M_PI / (float)n) * v;
+		float x = cos(i * 2.0 * M_PI / (float)N);
+		float y = sin(i * 2.0 * M_PI / (float)N);
+		float vx = -sin(i * 2.0 * M_PI / (float)N) * V;
+		float vy = cos(i * 2.0 * M_PI / (float)N) * V;
 
-		planets.push_back(Planet(m, x, y, vx, vy));
+		planets.push_back(Planet(M, x, y, vx, vy));
 	}
 
 	canvas = SDL_CreateTexture(gameRenderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_STREAMING, CANVAS_WIDTH, CANVAS_HEIGHT);

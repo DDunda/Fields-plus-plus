@@ -1,8 +1,5 @@
-Debug/**
-Release/**
-.vs/**
-x64/**
 Debug/
 Release/
 .vs/
 x64/
+config.h
